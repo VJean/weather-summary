@@ -4,6 +4,7 @@ from pathlib import Path
 
 config = configparser.ConfigParser()
 conf_path = Path(__file__).parent / "config.ini"
+conf_path = conf_path.resolve().as_posix()
 config.read(conf_path)
 
 if "lang" in config["DarkSky"]:
