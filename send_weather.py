@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-import sys, requests, pendulum
-import configparser
+import sys, requests, pendulum, configparser
+from pathlib import Path
 
 config = configparser.ConfigParser()
-config.read("config.ini")
+conf_path = Path(__file__).parent / "config.ini"
+config.read(conf_path)
 
 if "lang" in config["DarkSky"]:
     pendulum.set_locale(config.get("DarkSky", "lang"))
