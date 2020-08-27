@@ -7,8 +7,8 @@ conf_path = Path(__file__).parent / "config.ini"
 conf_path = conf_path.resolve().as_posix()
 config.read(conf_path)
 
-if "lang" in config["DarkSky"]:
-    pendulum.set_locale(config.get("DarkSky", "lang"))
+if "lang" in config["OpenWeather"]:
+    pendulum.set_locale(config.get("OpenWeather", "lang"))
 
 
 def notify(title, message):
@@ -24,12 +24,12 @@ def notify(title, message):
 
 
 def get_forecast():
-    url = "https://api.darksky.net/forecast/{}/{},{}?lang={}&units={}&exclude=minutely,daily,flags".format(
-        config["DarkSky"]["api_key"],
-        config["DarkSky"]["lat"],
-        config["DarkSky"]["lon"],
-        config.get("DarkSky", "lang", fallback="en"),
-        config.get("DarkSky", "units", fallback="auto"),
+    url = "https://api.openweathermap.org/data/2.5/onecall?appid={}&lat={}&lon={}&units={}&lang={}&exclude=minutely,daily".format(
+        config["OpenWeather"]["api_key"],
+        config["OpenWeather"]["lat"],
+        config["OpenWeather"]["lon"],
+        config.get("OpenWeather", "units", fallback="metric"),
+        config.get("OpenWeather", "lang", fallback="en"),
     )
     r = requests.get(url)
     if r.status_code == 200:
@@ -46,24 +46,24 @@ if __name__ == "__main__":
         print("Error when getting forecast")
         sys.exit(1)
 
-    title = f["hourly"]["summary"]
+    title = ",".join([c["description"] for c in f["current"]["weather"]])
     message = ""
     timezone = f["timezone"]
     now = pendulum.now(timezone)
     summary = ...
 
-    for hour in f["hourly"]["data"]:
-        time = pendulum.from_timestamp(hour["time"], tz=timezone)
+    for hour in f["hourly"]:
+        time = pendulum.from_timestamp(hour["dt"], tz=timezone)
         # only take 24 hours of forecast
         if now.diff(time).in_hours() >= 24:
             break
 
         # skip until summary is different
-        if summary == hour["summary"]:
+        if summary == [hw["description"] for hw in hour["weather"]]:
             continue
 
         # summary changed, add new weather section to message
-        summary = hour["summary"]
-        message += time.to_datetime_string() + ": " + summary + "\n"
+        summary = [hw["description"] for hw in hour["weather"]]
+        message += time.to_datetime_string() + ": " + ", ".join(summary) + "\n"
 
     notify(title, message)
