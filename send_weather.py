@@ -24,7 +24,7 @@ def notify(title, message):
 
 
 def get_forecast():
-    url = "https://api.openweathermap.org/data/2.5/onecall?appid={}&lat={}&lon={}&units={}&lang={}&exclude=minutely,daily".format(
+    url = "https://api.openweathermap.org/data/2.5/onecall?appid={}&lat={}&lon={}&units={}&lang={}&exclude=minutely".format(
         config["OpenWeather"]["api_key"],
         config["OpenWeather"]["lat"],
         config["OpenWeather"]["lon"],
@@ -46,7 +46,7 @@ if __name__ == "__main__":
         print("Error when getting forecast")
         sys.exit(1)
 
-    title = ",".join([c["description"] for c in f["current"]["weather"]])
+    title = "{} - {} | {}".format(f["daily"][0]["temp"]["min"], f["daily"][0]["temp"]["max"], ",".join([c["description"] for c in f["current"]["weather"]]))
     message = ""
     timezone = f["timezone"]
     now = pendulum.now(timezone)
@@ -66,4 +66,5 @@ if __name__ == "__main__":
         summary = [hw["description"] for hw in hour["weather"]]
         message += time.to_datetime_string() + ": " + ", ".join(summary) + "\n"
 
-    notify(title, message)
+    #notify(title, message)
+    print(title, message)
