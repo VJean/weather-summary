@@ -66,5 +66,4 @@ if __name__ == "__main__":
         summary = [hw["description"] for hw in hour["weather"]]
         message += time.to_datetime_string() + ": " + ", ".join(summary) + "\n"
 
-    #notify(title, message)
-    print(title, message)
+    notify(title, message)
