@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "weather-summary"
+version = "0.1.0"
+description = "Send a summary of the weather conditions over the next 24 hours"
+authors = ["VJean"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.7"
+pendulum = ">=2.1.2"
+requests = ">=2.24.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
