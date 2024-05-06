@@ -35,7 +35,7 @@ def get_forecast():
     if r.status_code == 200:
         return r.json()
     else:
-        # should log error
+        print(f"{r.status_code} error: {r.text}")
         return None
 
 
